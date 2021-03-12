@@ -1,5 +1,5 @@
 WIDTH = 720
 HEIGHT = 600
 FPS = 60
-BUTTONFONT = 'cambriacambriamath'
+BUTTONFONT = 'consolas'
 BUTTONFONTSIZE = 50
