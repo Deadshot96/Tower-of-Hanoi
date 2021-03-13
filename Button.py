@@ -34,8 +34,8 @@ class Button:
         self.label_width = max(self.labelText.get_width(), self.labelTextHover.get_width())
         self.label_height = max(self.labelText.get_height(), self.labelTextHover.get_height()) 
 
-        self.width = int(self.label_width * 1.5)
-        self.height = int(self.label_height * 1.7)
+        self.width = int(self.label_width * 1.4)
+        self.height = int(self.label_height * 1.5)
 
         self.button_pressed_img = pygame.transform.scale(self.button_pressed_img, (self.width, self.height))
         self.button_unpress_img = pygame.transform.scale(self.button_unpress_img, (self.width, self.height))
@@ -45,8 +45,8 @@ class Button:
 
     def draw(self, win: Surface):
 
-        destX = self.x + (self.width - self.label_width) // 2
-        destY = self.y + (self.height - self.label_height) // 2
+        destX = self.x + (self.width - self.label_width) // 2 + 2
+        destY = self.y + (self.height - self.label_height) // 2 + 2
 
         if self.is_pressed():
             win.blit(self.button_pressed_img, (self.x, self.y))
