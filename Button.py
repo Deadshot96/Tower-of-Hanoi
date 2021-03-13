@@ -28,19 +28,19 @@ class Button:
         self.set_label_and_size()
 
     def set_label_and_size(self) -> None:
-        self.labelText = font.render(self.label, 1, BUTTON_LABEL_COLOR)
-        self.labelTextHover = font.render(self.label, 1, BUTTON_LABEL_HOVER_COLOR)
+        self.labelText = self.font.render(self.label, 1, BUTTON_LABEL_COLOR)
+        self.labelTextHover = self.font.render(self.label, 1, BUTTON_LABEL_HOVER_COLOR)
 
         self.label_width = max(self.labelText.get_width(), self.labelTextHover.get_width())
         self.label_height = max(self.labelText.get_height(), self.labelTextHover.get_height()) 
 
-        self.width = int(self.label_width * 1.2)
-        self.height = int(self.label_height * 1.2)
+        self.width = int(self.label_width * 1.5)
+        self.height = int(self.label_height * 1.7)
 
         self.button_pressed_img = pygame.transform.scale(self.button_pressed_img, (self.width, self.height))
         self.button_unpress_img = pygame.transform.scale(self.button_unpress_img, (self.width, self.height))
 
-        self.buttonRect = pygame.Rect(self.x, self.y, self.width, self.height)
+        self.buttonRect = pygame.Rect(self.x + X_OFF, self.y + Y_OFF, self.width, self.height)
 
 
     def draw(self, win: Surface):
