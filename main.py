@@ -20,9 +20,15 @@ class gui:
         self.titlefont = None
         self.button_p = None
         self.button_up = None
+        self.up_button = None
+        self.down_button = None
         self.buttons = list()
-        self.diskText = 'Disks: '
+        self.diskText = "Disks: "
         self.disks = DISKS
+        self.moveText = "Moves: "
+        self.moves = 1024
+        self.minMoveText = "Minimum moves: "
+        self.minMoves = 2 ** self.disks - 1
 
 
     def gui_init(self):
@@ -56,11 +62,21 @@ class gui:
         self.button_p = pygame.image.load(BUTTON_PRESSED).convert_alpha()
         self.button_up = pygame.image.load(BUTTON_UNPRESS).convert_alpha()
 
-        self.restartButton = Button(460 - self.x_off, BUTTONS_Y - self.y_off, 'Restart', self.button_p, self.button_up)
-        self.solveButton = Button(580 - self.x_off, BUTTONS_Y - self.y_off, 'Solve!', self.button_p, self.button_up)
+        self.up_button = Button(170 - self.x_off, BUTTONS_Y - self.y_off, "Up", self.button_p, self.button_up)
+        self.down_button = Button(215 - self.x_off, BUTTONS_Y - self.y_off, "Down", self.button_p, self.button_up)
+
+        self.up_button.set_multipliers(1.7, 1.5)
+
+        # self.up_button = pygame.transform.scale(self.up_button, (DELTA_BUTTON_WIDTH, DELTA_BUTTON_HEIGHT))
+        # self.down_button = pygame.transform.scale(self.down_button, (DELTA_BUTTON_WIDTH, DELTA_BUTTON_HEIGHT))
+
+        self.restartButton = Button(460 - self.x_off, BUTTONS_Y - self.y_off, "Restart", self.button_p, self.button_up)
+        self.solveButton = Button(580 - self.x_off, BUTTONS_Y - self.y_off, "Solve!", self.button_p, self.button_up)
         
         self.buttons.append(self.restartButton)
         self.buttons.append(self.solveButton)
+        self.buttons.append(self.up_button)
+        self.buttons.append(self.down_button)
 
 
     def quit(self):
@@ -72,6 +88,14 @@ class gui:
         w, h = diskRender.get_size()
         win.blit(diskRender, (20, BUTTONS_Y - self.y_off + 5))
 
+        movesRender = self.panelfont.render(self.moveText + f"{self.moves}", 1, BUTTON_LABEL_COLOR)
+        win.blit(movesRender, (270, BUTTONS_Y - self.y_off + 5))
+
+        minMoveRender = self.panelfont.render(self.minMoveText + f"{self.minMoves}", 1, BUTTON_LABEL_COLOR)
+        blitx = (self.width - minMoveRender.get_width()) // 2 - self.x_off
+        blity = (self.gui_height - minMoveRender.get_height())
+        win.blit(minMoveRender, (blitx, blity))
+ 
     def draw(self):
         self.guiWin.fill(STEEL_BLUE)
         self.draw_panel(self.guiWin)
