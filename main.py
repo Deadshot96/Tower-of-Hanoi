@@ -2,6 +2,7 @@ import pygame
 from settings import *
 from colors import *
 from Button import Button
+from Tower import Tower
 
 
 class gui:
@@ -29,6 +30,9 @@ class gui:
         self.moves = 1024
         self.minMoveText = "Minimum moves: "
         self.minMoves = 2 ** self.disks - 1
+        self.towerS = None
+        self.towerT = None
+        self.towerD = None
 
 
     def gui_init(self):
@@ -78,6 +82,8 @@ class gui:
         self.buttons.append(self.up_button)
         self.buttons.append(self.down_button)
 
+        self.towerS = Tower('s')
+
 
     def quit(self):
         pygame.font.quit()
@@ -99,9 +105,20 @@ class gui:
     def draw(self):
         self.guiWin.fill(STEEL_BLUE)
         self.draw_panel(self.guiWin)
-        
+
+        # Draw Tower Base
+        cX1, cX2 = BASE_X, BASE_X + BASE_WIDTH
+        cY1 = cY2 = BASE_Y + BASE_HEIGHT // 2
+        radius = BASE_HEIGHT // 2
+        pygame.draw.rect(self.guiWin, CHOCOLATE, (BASE_X, BASE_Y, BASE_WIDTH, BASE_HEIGHT))
+        pygame.draw.circle(self.guiWin, CHOCOLATE, (cX1, cY1), radius)
+        pygame.draw.circle(self.guiWin, CHOCOLATE, (cX2, cY2), radius)
+
+
         for button in self.buttons:
             button.draw(self.guiWin)
+
+        self.towerS.draw(self.guiWin)
         
         pygame.display.update()
 
