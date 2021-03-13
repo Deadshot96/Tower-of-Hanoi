@@ -20,6 +20,9 @@ class gui:
         self.titlefont = None
         self.button_p = None
         self.button_up = None
+        self.buttons = list()
+        self.diskText = 'Disks: '
+        self.disks = DISKS
 
 
     def gui_init(self):
@@ -39,6 +42,8 @@ class gui:
         self.clock = pygame.time.Clock()
 
         self.titlefont = pygame.font.SysFont(TITLE_FONT, TITLE_FONT_SIZE)
+        self.panelfont = pygame.font.SysFont(BUTTON_FONT, int(BUTTON_FONT_SIZE * 1.2))
+
 
         self.title = self.titlefont.render("3 Towers of Hanoi", 1, GOLD)
         w, h = self.title.get_size()
@@ -51,15 +56,28 @@ class gui:
         self.button_p = pygame.image.load(BUTTON_PRESSED).convert_alpha()
         self.button_up = pygame.image.load(BUTTON_UNPRESS).convert_alpha()
 
-        self.restartButton = Button(300 - self.x_off, 85 - self.y_off, 'Restart', self.button_p, self.button_up)
+        self.restartButton = Button(460 - self.x_off, BUTTONS_Y - self.y_off, 'Restart', self.button_p, self.button_up)
+        self.solveButton = Button(580 - self.x_off, BUTTONS_Y - self.y_off, 'Solve!', self.button_p, self.button_up)
+        
+        self.buttons.append(self.restartButton)
+        self.buttons.append(self.solveButton)
+
 
     def quit(self):
         pygame.font.quit()
         pygame.quit()
 
+    def draw_panel(self, win: pygame.Surface):
+        diskRender = self.panelfont.render(self.diskText + f"{self.disks}", 1, BUTTON_LABEL_COLOR)
+        w, h = diskRender.get_size()
+        win.blit(diskRender, (20, BUTTONS_Y - self.y_off + 5))
+
     def draw(self):
         self.guiWin.fill(STEEL_BLUE)
-        self.restartButton.draw(self.guiWin)
+        self.draw_panel(self.guiWin)
+        
+        for button in self.buttons:
+            button.draw(self.guiWin)
         
         pygame.display.update()
 
@@ -68,7 +86,7 @@ class gui:
         self.gui_init()
         run = True
         while run:
-            
+
             self.clock.tick(self.fps)
             self.draw()
 
@@ -82,19 +100,25 @@ class gui:
 
                 if event.type == pygame.MOUSEBUTTONDOWN:
                     print(x, y, self.win.get_at(pos), sep='\t')
-                
-                    if self.restartButton.in_button(pos):
-                        self.restartButton.press()
+
+                    for button in self.buttons:
+                        if  button.in_button(pos):
+                            button.press()
+
+                    # if self.restartButton.is_pressed():
+                    #     self.restartButton.unpress()
 
                 if event.type == pygame.MOUSEBUTTONUP:
+                    
+                    for button in self.buttons:
+                        if button.is_pressed():
+                            button.unpress()
 
-                    if self.restartButton.in_button(pos) and self.restartButton.is_pressed():
-                        self.restartButton.unpress()
-
-            if self.restartButton.in_button(pos):
-                self.restartButton.hover()
-            else:
-                self.restartButton.unhover()
+            for button in self.buttons:
+                if button.in_button(pos):
+                    button.hover()
+                else:
+                    button.unhover()
 
             pygame.display.update()
 
