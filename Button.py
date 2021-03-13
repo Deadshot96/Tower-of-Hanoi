@@ -17,6 +17,8 @@ class Button:
         self.height = 0
         self.label_width = 0
         self.label_height = 0
+        self.w_mul = 1.4
+        self.h_mul = 1.5
         self.buttonRect = None
         self.labelTextHover = None
         self.labelText = None
@@ -34,8 +36,8 @@ class Button:
         self.label_width = max(self.labelText.get_width(), self.labelTextHover.get_width())
         self.label_height = max(self.labelText.get_height(), self.labelTextHover.get_height()) 
 
-        self.width = int(self.label_width * 1.4)
-        self.height = int(self.label_height * 1.5)
+        self.width = int(self.label_width * self.w_mul)
+        self.height = int(self.label_height * self.h_mul)
 
         self.button_pressed_img = pygame.transform.scale(self.button_pressed_img, (self.width, self.height))
         self.button_unpress_img = pygame.transform.scale(self.button_unpress_img, (self.width, self.height))
@@ -82,6 +84,15 @@ class Button:
     def get_pos(self) -> Tuple:
         return self.x, self.y
 
+    def get_label(self) -> str:
+        return self.label
+
     def in_button(self, pos: Tuple) -> bool:
         return self.buttonRect.collidepoint(pos)
+
+    def set_multipliers(self, w_mul: float, h_mul: float) -> None:
+        self.w_mul = w_mul
+        self.h_mul = h_mul
+        
+        self.set_label_and_size()
         
