@@ -89,7 +89,7 @@ class gui:
         win.blit(diskRender, (20, BUTTONS_Y - self.y_off + 5))
 
         movesRender = self.panelfont.render(self.moveText + f"{self.moves}", 1, BUTTON_LABEL_COLOR)
-        win.blit(movesRender, (270, BUTTONS_Y - self.y_off + 5))
+        win.blit(movesRender, (260, BUTTONS_Y - self.y_off + 5))
 
         minMoveRender = self.panelfont.render(self.minMoveText + f"{self.minMoves}", 1, BUTTON_LABEL_COLOR)
         blitx = (self.width - minMoveRender.get_width()) // 2 - self.x_off
@@ -104,6 +104,22 @@ class gui:
             button.draw(self.guiWin)
         
         pygame.display.update()
+
+    def button_click(self, button: Button):
+        label = button.get_label().lower()
+
+        if label.startswith('restart'):
+            pass
+        elif label.startswith('solve'):
+            pass
+        elif label.startswith('up'):
+            self.disks = min(self.disks + 1, 8)
+            self.minMoves = 2 ** self.disks - 1
+            self.moves = 0
+        elif label.startswith('down'):
+            self.disks = max(3, self.disks - 1)
+            self.minMoves = 2 ** self.disks - 1
+            self.moves = 0
 
     def run(self):
 
@@ -128,6 +144,7 @@ class gui:
                     for button in self.buttons:
                         if  button.in_button(pos):
                             button.press()
+                            self.button_click(button)
 
                     # if self.restartButton.is_pressed():
                     #     self.restartButton.unpress()
