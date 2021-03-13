@@ -45,9 +45,11 @@ class gui:
         pos = (self.width - w) // 2, (self.y_off - h) // 2
         self.win.blit(self.title, pos)
 
-        self.button_p = pygame.transform.scale(pygame.image.load(BUTTON_PRESSED), (240, 80))
-        self.button_up = pygame.transform.scale(pygame.image.load(BUTTON_UNPRESS), (240, 80))
+        # self.button_p = pygame.transform.scale(pygame.image.load(BUTTON_PRESSED).convert_alpha(), (240, 80))
+        # self.button_up = pygame.transform.scale(pygame.image.load(BUTTON_UNPRESS).convert_alpha(), (240, 80))
 
+        self.button_p = pygame.image.load(BUTTON_PRESSED).convert_alpha()
+        self.button_up = pygame.image.load(BUTTON_UNPRESS).convert_alpha()
 
         self.restartButton = Button(300 - self.x_off, 85 - self.y_off, 'Restart', self.button_p, self.button_up)
 
