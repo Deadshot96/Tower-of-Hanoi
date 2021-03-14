@@ -3,6 +3,7 @@ from settings import *
 from colors import *
 from Button import Button
 from Tower import Tower
+from Disk import Disk
 
 
 class gui:
@@ -25,14 +26,15 @@ class gui:
         self.down_button = None
         self.buttons = list()
         self.diskText = "Disks: "
-        self.disks = DISKS
+        self.numDisks = DISKS if DISKS in range(3, 9) else 8
         self.moveText = "Moves: "
         self.moves = 1024
         self.minMoveText = "Minimum moves: "
-        self.minMoves = 2 ** self.disks - 1
+        self.minMoves = 2 ** self.numDisks - 1
         self.towerS = None
         self.towerT = None
         self.towerD = None
+        self.disks = list()
 
 
     def gui_init(self):
@@ -74,28 +76,36 @@ class gui:
         # self.up_button = pygame.transform.scale(self.up_button, (DELTA_BUTTON_WIDTH, DELTA_BUTTON_HEIGHT))
         # self.down_button = pygame.transform.scale(self.down_button, (DELTA_BUTTON_WIDTH, DELTA_BUTTON_HEIGHT))
 
-        self.restartButton = Button(460 - self.x_off, BUTTONS_Y - self.y_off, "Restart", self.button_p, self.button_up)
-        self.solveButton = Button(580 - self.x_off, BUTTONS_Y - self.y_off, "Solve!", self.button_p, self.button_up)
+        self.restartButton = Button(600 - self.x_off, BUTTONS_Y - self.y_off, "Restart", self.button_p, self.button_up)
+        self.solveButton = Button(720 - self.x_off, BUTTONS_Y - self.y_off, "Solve!", self.button_p, self.button_up)
         
         self.buttons.append(self.restartButton)
         self.buttons.append(self.solveButton)
         self.buttons.append(self.up_button)
         self.buttons.append(self.down_button)
 
-        self.towerS = Tower('s')
+        self.towerS = Tower(TOWER_S_X, 1)
+        self.towerT = Tower(TOWER_T_X, 2)
+        self.towerD = Tower(TOWER_D_X, 3)
+
+        self.towers = [self.towerS, self.towerT, self.towerD]
 
 
     def quit(self):
         pygame.font.quit()
         pygame.quit()
 
+    def reset_disks(self):
+        self.disks.clear()
+
     def draw_panel(self, win: pygame.Surface):
-        diskRender = self.panelfont.render(self.diskText + f"{self.disks}", 1, BUTTON_LABEL_COLOR)
+        diskRender = self.panelfont.render(self.diskText + f"{self.numDisks}", 1, BUTTON_LABEL_COLOR)
         w, h = diskRender.get_size()
         win.blit(diskRender, (20, BUTTONS_Y - self.y_off + 5))
 
         movesRender = self.panelfont.render(self.moveText + f"{self.moves}", 1, BUTTON_LABEL_COLOR)
-        win.blit(movesRender, (260, BUTTONS_Y - self.y_off + 5))
+        x = (self.width - movesRender.get_width()) // 2
+        win.blit(movesRender, (320, BUTTONS_Y - self.y_off + 5))
 
         minMoveRender = self.panelfont.render(self.minMoveText + f"{self.minMoves}", 1, BUTTON_LABEL_COLOR)
         blitx = (self.width - minMoveRender.get_width()) // 2 - self.x_off
@@ -118,7 +128,10 @@ class gui:
         for button in self.buttons:
             button.draw(self.guiWin)
 
-        self.towerS.draw(self.guiWin)
+        for tower in self.towers:
+            tower.draw(self.guiWin)
+
+        # self.towerS.draw(self.guiWin)
         
         pygame.display.update()
 
@@ -130,12 +143,13 @@ class gui:
         elif label.startswith('solve'):
             pass
         elif label.startswith('up'):
-            self.disks = min(self.disks + 1, 8)
-            self.minMoves = 2 ** self.disks - 1
+            self.numDisks = min(self.numDisks + 1, 8)
+            self.minMoves = 2 ** self.numDisks - 1
             self.moves = 0
+
         elif label.startswith('down'):
-            self.disks = max(3, self.disks - 1)
-            self.minMoves = 2 ** self.disks - 1
+            self.numDisks = max(3, self.numDisks - 1)
+            self.minMoves = 2 ** self.numDisks - 1
             self.moves = 0
 
     def run(self):
@@ -163,11 +177,7 @@ class gui:
                             button.press()
                             self.button_click(button)
 
-                    # if self.restartButton.is_pressed():
-                    #     self.restartButton.unpress()
-
-                if event.type == pygame.MOUSEBUTTONUP:
-                    
+                if event.type == pygame.MOUSEBUTTONUP:                    
                     for button in self.buttons:
                         if button.is_pressed():
                             button.unpress()
