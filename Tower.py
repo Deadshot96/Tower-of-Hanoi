@@ -2,7 +2,6 @@ import pygame
 from pygame import Surface
 from settings import *
 from colors import *
-from Disk import Disk
 
 class Tower:
 
@@ -31,23 +30,33 @@ class Tower:
         pygame.draw.circle(win, self.color, (cX, cY), radius)
 
     def get_stack_height(self):
-        return len(self.disks) * DISK_HEIGHT + BASE_Y
+        return BASE_Y - len(self.disks) * DISK_HEIGHT
 
-    def is_proper_disk(self, disk: Disk):
+    def is_proper_disk(self, disk):
         return disk.get_index() < self.get_min_disk_index()
 
-    def add_disk(self, disk: Disk) -> bool:
-        if self.get_min_disk_index() < disk.get_index():
+    def add_disk(self, disk) -> bool:
+        if self.get_min_disk_index() > disk.get_index():
             self.disks.append(disk)
             return True
         
         return False
 
     def get_min_disk_index(self):
-        return min(self.disks, key=lambda d: d.get_index())
+        if len(self.disks) == 0:
+            return 20
+        return min(self.disks, key=lambda d: d.get_index()).get_index()
 
     def get_x(self) -> int:
         return self.x
 
     def sort_disks(self):
         self.disks.sort(key=lambda d: d.get_index())
+
+    def clear_tower(self):
+        self.disks.clear()
+
+    def get_top_disk(self):
+        if len(self.disks) == 0:
+            return 0
+        return self.disks[-1]
