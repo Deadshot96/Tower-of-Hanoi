@@ -36,6 +36,13 @@ class gui:
         self.towerD = None
         self.disks = list()
 
+        self.dblClickEvent = pygame.event.Event(EVENT_DBLCLICK)
+        self.dblClickLimit = self.fps // 3
+        self.dblClickVar = 0
+
+        self.selectedDisk = None
+
+
 
     def gui_init(self):
 
@@ -68,16 +75,16 @@ class gui:
         self.button_p = pygame.image.load(BUTTON_PRESSED).convert_alpha()
         self.button_up = pygame.image.load(BUTTON_UNPRESS).convert_alpha()
 
-        self.up_button = Button(170 - self.x_off, BUTTONS_Y - self.y_off, "Up", self.button_p, self.button_up)
-        self.down_button = Button(215 - self.x_off, BUTTONS_Y - self.y_off, "Down", self.button_p, self.button_up)
+        self.up_button = Button(190 - self.x_off, BUTTONS_Y - self.y_off, "Up", self.button_p, self.button_up)
+        self.down_button = Button(240 - self.x_off, BUTTONS_Y - self.y_off, "Down", self.button_p, self.button_up)
 
         self.up_button.set_multipliers(1.7, 1.5)
 
         # self.up_button = pygame.transform.scale(self.up_button, (DELTA_BUTTON_WIDTH, DELTA_BUTTON_HEIGHT))
         # self.down_button = pygame.transform.scale(self.down_button, (DELTA_BUTTON_WIDTH, DELTA_BUTTON_HEIGHT))
 
-        self.restartButton = Button(600 - self.x_off, BUTTONS_Y - self.y_off, "Restart", self.button_p, self.button_up)
-        self.solveButton = Button(720 - self.x_off, BUTTONS_Y - self.y_off, "Solve!", self.button_p, self.button_up)
+        self.restartButton = Button(730 - self.x_off, BUTTONS_Y - self.y_off, "Restart", self.button_p, self.button_up)
+        self.solveButton = Button(860 - self.x_off, BUTTONS_Y - self.y_off, "Solve!", self.button_p, self.button_up)
         
         self.buttons.append(self.restartButton)
         self.buttons.append(self.solveButton)
@@ -90,13 +97,27 @@ class gui:
 
         self.towers = [self.towerS, self.towerT, self.towerD]
 
+        self.reset_disks()
 
     def quit(self):
         pygame.font.quit()
         pygame.quit()
 
+    def clear_towers(self):
+        for tower in self.towers:
+            tower.clear_tower()
+
     def reset_disks(self):
         self.disks.clear()
+        self.clear_towers()
+
+        for index in range(self.numDisks, 0, -1):
+            disk = Disk(index, self.towerS)
+            # print(self.towerS.get_min_disk_index())
+            self.towerS.add_disk(disk)
+
+            self.disks.append(disk)
+
 
     def draw_panel(self, win: pygame.Surface):
         diskRender = self.panelfont.render(self.diskText + f"{self.numDisks}", 1, BUTTON_LABEL_COLOR)
@@ -104,8 +125,8 @@ class gui:
         win.blit(diskRender, (20, BUTTONS_Y - self.y_off + 5))
 
         movesRender = self.panelfont.render(self.moveText + f"{self.moves}", 1, BUTTON_LABEL_COLOR)
-        x = (self.width - movesRender.get_width()) // 2
-        win.blit(movesRender, (320, BUTTONS_Y - self.y_off + 5))
+        x = (self.width - movesRender.get_width()) // 2 - self.x_off
+        win.blit(movesRender, (x, BUTTONS_Y - self.y_off + 5))
 
         minMoveRender = self.panelfont.render(self.minMoveText + f"{self.minMoves}", 1, BUTTON_LABEL_COLOR)
         blitx = (self.width - minMoveRender.get_width()) // 2 - self.x_off
@@ -131,6 +152,9 @@ class gui:
         for tower in self.towers:
             tower.draw(self.guiWin)
 
+        for disk in self.disks:
+            disk.draw(self.guiWin)
+
         # self.towerS.draw(self.guiWin)
         
         pygame.display.update()
@@ -146,11 +170,13 @@ class gui:
             self.numDisks = min(self.numDisks + 1, 8)
             self.minMoves = 2 ** self.numDisks - 1
             self.moves = 0
+            self.reset_disks()
 
         elif label.startswith('down'):
             self.numDisks = max(3, self.numDisks - 1)
             self.minMoves = 2 ** self.numDisks - 1
             self.moves = 0
+            self.reset_disks()
 
     def run(self):
 
@@ -176,17 +202,35 @@ class gui:
                         if  button.in_button(pos):
                             button.press()
                             self.button_click(button)
+                            
+
+                    if event.button == 1:
+                        print(self.dblClickVar)
+                        if self.dblClickVar == 0:
+                            self.dblClickVar = 1
+                        elif self.dblClickVar <= self.dblClickLimit:
+                            pygame.event.post(self.dblClickEvent)
 
                 if event.type == pygame.MOUSEBUTTONUP:                    
                     for button in self.buttons:
                         if button.is_pressed():
                             button.unpress()
 
+                if event.type == self.dblClickEvent.type:
+                    print("DBL CLICK")
+                    self.dblClickVar = 0
+
             for button in self.buttons:
                 if button.in_button(pos):
                     button.hover()
                 else:
                     button.unhover()
+
+            if self.dblClickVar != 0:
+                self.dblClickVar += 1
+            
+            if self.dblClickVar > self.dblClickLimit:
+                self.dblClickVar = 0
 
             pygame.display.update()
 
