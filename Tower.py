@@ -34,13 +34,20 @@ class Tower:
         return len(self.disks) * DISK_HEIGHT + BASE_Y
 
     def is_proper_disk(self, disk: Disk):
-        pass
+        return disk.get_index() < self.get_min_disk_index()
 
-    def add_disk(self, disk: Disk):
-        pass
+    def add_disk(self, disk: Disk) -> bool:
+        if self.get_min_disk_index() < disk.get_index():
+            self.disks.append(disk)
+            return True
+        
+        return False
 
     def get_min_disk_index(self):
         return min(self.disks, key=lambda d: d.get_index())
 
     def get_x(self) -> int:
         return self.x
+
+    def sort_disks(self):
+        self.disks.sort(key=lambda d: d.get_index())
