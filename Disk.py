@@ -9,7 +9,7 @@ class Disk:
     def __init__(self, index: int, tower: Tower):
         self.index = index
         self.tower = tower
-        self.width = index * 30
+        self.width = index * DISK_WIDTH_MULTIPLIER
         self.height = DISK_HEIGHT
         self.color = DISKS_COLORS [index]
         self.x = 0
@@ -18,11 +18,11 @@ class Disk:
         self.set_positions()
 
     def set_positions(self):
-        y = self.tower.get_stack_height()
-        x = self.tower.get_x()
+        self.y = self.tower.get_stack_height()
+        self.x = self.tower.get_x()
 
-        self.x = x - self.width // 2
-        self.y = y - self.height
+        # self.x = x - self.width // 2
+        # self.y = y - self.height
 
     def get_top_left(self):
         pass
@@ -35,7 +35,17 @@ class Disk:
         self.set_positions()
 
     def draw(self, win: Surface):
-        pass
+
+        radius = self.height // 2
+        rect = self.x - self.width // 2 + radius, self.y - self.height, self.width -  2 * radius, self.height
+        pygame.draw.rect(win, self.color, rect)
+
+        cX1, cX2 = self.x - self.width // 2 + radius, self.x + self.width // 2 - radius
+        cY1 = cY2 = self.y - self.height // 2
+
+        pygame.draw.circle(win, self.color, (cX1, cY1), radius)
+        pygame.draw.circle(win, self.color, (cX2, cY2), radius)
+
 
     def get_index(self) -> int:
         return self.index
