@@ -28,7 +28,7 @@ class gui:
         self.diskText = "Disks: "
         self.numDisks = DISKS if DISKS in range(3, 9) else 8
         self.moveText = "Moves: "
-        self.moves = 1024
+        self.moves = 0
         self.minMoveText = "Minimum moves: "
         self.minMoves = 2 ** self.numDisks - 1
         self.towerS = None
@@ -75,10 +75,10 @@ class gui:
         self.button_p = pygame.image.load(BUTTON_PRESSED).convert_alpha()
         self.button_up = pygame.image.load(BUTTON_UNPRESS).convert_alpha()
 
-        self.up_button = Button(190 - self.x_off, BUTTONS_Y - self.y_off, "Up", self.button_p, self.button_up)
+        self.up_button = Button(180 - self.x_off, BUTTONS_Y - self.y_off, "Up", self.button_p, self.button_up)
         self.down_button = Button(240 - self.x_off, BUTTONS_Y - self.y_off, "Down", self.button_p, self.button_up)
 
-        self.up_button.set_multipliers(1.7, 1.5)
+        self.up_button.set_multipliers(2, 1.5)
 
         # self.up_button = pygame.transform.scale(self.up_button, (DELTA_BUTTON_WIDTH, DELTA_BUTTON_HEIGHT))
         # self.down_button = pygame.transform.scale(self.down_button, (DELTA_BUTTON_WIDTH, DELTA_BUTTON_HEIGHT))
@@ -219,6 +219,12 @@ class gui:
                 if event.type == self.dblClickEvent.type:
                     print("DBL CLICK")
                     self.dblClickVar = 0
+                    dblClickPos = x - self.x_off, y - self.y_off
+                    for tower in self.towers:
+                        disk = tower.get_top_disk()
+
+                        if disk and disk.in_disk(dblClickPos):
+                            print(f"True: {disk.get_index()}")
 
             for button in self.buttons:
                 if button.in_button(pos):
