@@ -3,6 +3,7 @@ from pygame import Surface
 from settings import *
 from colors import *
 from Tower import Tower
+from typing import Tuple
 
 class Disk:
 
@@ -14,12 +15,16 @@ class Disk:
         self.color = DISKS_COLORS [index]
         self.x = 0
         self.y = 0
+        self.diskRect = None
 
         self.set_positions()
 
     def set_positions(self):
         self.y = self.tower.get_stack_height()
         self.x = self.tower.get_x()
+
+        rect = self.x - self.width // 2, self.y - self.height, self.width, self.height
+        self.diskRect = pygame.Rect(rect)
 
         # self.x = x - self.width // 2
         # self.y = y - self.height
@@ -49,3 +54,6 @@ class Disk:
 
     def get_index(self) -> int:
         return self.index
+
+    def in_disk(self, pos: Tuple) -> bool:
+        return self.diskRect.collidepoint(pos)
