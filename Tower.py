@@ -17,6 +17,9 @@ class Tower:
         self.baseWidth = TOWER_WIDTH
         self.baseHeight = TOWER_HEIGHT
 
+        rect = self.x - DELTA // 3, self.y - int(self.height * 1.5), DELTA * 2 // 3, self.height 
+        self.towerRect = pygame.Rect(rect)
+
     def draw(self, win: Surface):
         x = self.x - self.width // 2
         y = self.y - self.height
@@ -60,3 +63,6 @@ class Tower:
         if len(self.disks) == 0:
             return 0
         return self.disks[-1]
+
+    def in_tower(self, x: int, y: int) -> bool:
+        return self.towerRect
