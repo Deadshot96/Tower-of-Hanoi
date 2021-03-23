@@ -57,3 +57,7 @@ class Disk:
 
     def in_disk(self, pos: Tuple) -> bool:
         return self.diskRect.collidepoint(pos)
+
+    def get_pos(self) -> Tuple[int]:
+        return self.x, self.y
+        
