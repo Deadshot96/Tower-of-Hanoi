@@ -41,6 +41,8 @@ class gui:
         self.dblClickVar = 0
 
         self.selectedDisk = None
+        self.selectedDiskDelta = None
+        self.selectedDiskTower = None
 
 
 
@@ -178,6 +180,13 @@ class gui:
             self.moves = 0
             self.reset_disks()
 
+    def placeDisk(self, x: int, y: int):
+        x -= self.x_off
+        y -= self.y_off
+
+        
+    
+
     def run(self):
 
         self.gui_init()
@@ -225,6 +234,18 @@ class gui:
 
                         if disk and disk.in_disk(dblClickPos):
                             print(f"True: {disk.get_index()}")
+                            self.selectedDisk = disk
+                            diskX, diskY = disk.get_pos()
+
+                            self.selectedDiskDelta = diskX - x, diskY - y
+                            self.selectedDiskTower = disk.get_tower()
+
+                if event.type == pygame.MOUSEBUTTONUP:
+                    
+                    self.placeDisk(x, y)
+
+
+
 
             for button in self.buttons:
                 if button.in_button(pos):
