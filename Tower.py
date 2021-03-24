@@ -5,14 +5,14 @@ from colors import *
 
 class Tower:
 
-    def __init__(self, x: int, id: int):
+    def __init__(self, x: int, index: int):
 
         self.x = x
         self.y = TOWER_Y
         self.width = TOWER_WIDTH
         self.height = TOWER_HEIGHT
         self.color = CHOCOLATE
-        self.id = id
+        self.index = index
         self.disks = list()
         self.baseWidth = TOWER_WIDTH
         self.baseHeight = TOWER_HEIGHT
@@ -78,3 +78,6 @@ class Tower:
 
     def in_tower(self, x: int, y: int) -> bool:
         return self.towerRect.collidepoint(x, y)
+
+    def get_index(self) -> int:
+        return self.index
