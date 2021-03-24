@@ -50,7 +50,7 @@ class Disk:
 
         pygame.draw.circle(win, self.color, (cX1, cY1), radius)
         pygame.draw.circle(win, self.color, (cX2, cY2), radius)
-        pygame.draw.rect(win, self.color, self.diskRect, 2)
+        # pygame.draw.rect(win, self.color, self.diskRect, 2)
 
     def get_index(self) -> int:
         return self.index

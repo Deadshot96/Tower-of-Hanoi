@@ -34,7 +34,7 @@ class Tower:
         radius = self.width // 2
 
         pygame.draw.circle(win, self.color, (cX, cY), radius)
-        pygame.draw.rect(win, self.color, self.towerRect, 2)
+        # pygame.draw.rect(win, self.color, self.towerRect, 2)
 
     def get_stack_height(self):
         return BASE_Y - len(self.disks) * DISK_HEIGHT
