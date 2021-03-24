@@ -37,7 +37,7 @@ class gui:
         self.disks = list()
 
         self.dblClickEvent = pygame.event.Event(EVENT_DBLCLICK)
-        self.dblClickLimit = self.fps // 3
+        self.dblClickLimit = FPS // 3
         self.dblClickVar = 0
 
         self.selectedDisk = None
@@ -172,7 +172,8 @@ class gui:
         if label.startswith('restart'):
             self.reset_disks()
         elif label.startswith('solve'):
-            pass
+            self.reset_disks()
+            self.hanoi(self.numDisks, 1, 3, 2)
         elif label.startswith('up'):
             self.numDisks = min(self.numDisks + 1, 8)
             self.minMoves = 2 ** self.numDisks - 1
@@ -201,6 +202,74 @@ class gui:
                 
         self.selectedDiskTower.add_disk(self.selectedDisk)
 
+    def hanoi(self, n: int, s: int, d: int, t: int):
+        if n > 0:
+            self.hanoi(n - 1, s, t, d)
+            print(f"{n} disk moved {s} -> {d}")
+            self.move(n, s, d)
+            self.hanoi(n - 1, t, d, s)
+
+    def move(self, index: int, s: int, d: int):
+        disk = None
+        src = None
+        dest = None
+        print(index, s, d, sep='\t')
+
+        for dVar in self.disks:
+            if dVar.get_index() == index:
+                disk = dVar
+
+        for t in self.towers:
+            if t.get_index() == s:
+                src = t
+            if t.get_index() == d:
+                dest = t
+            
+        print(src, dest, sep='\t')
+
+        src.remove_disk(disk)
+        xi, yi = disk.get_pos()
+        xf, yf = dest.get_x(), dest.get_stack_height()
+        xiter = xi
+        xDelta = 2 if xi < xf else -2
+        slope = (yf - yi) / (xf - xi)
+
+        run = True
+        while run and (abs(xiter - xi) <= abs(xf - xi)):
+            self.clock.tick(self.fps)
+            pos = pygame.mouse.get_pos()
+            x, y = pos
+
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    self.quit()
+
+                if event.type == pygame.MOUSEBUTTONDOWN:
+                    print(x, y, self.win.get_at(pos), sep='\t')
+
+                    for button in self.buttons:
+                        if  button.in_button(pos):
+                            button.press()
+                            self.button_click(button)
+                            self.run()
+
+
+            for button in self.buttons:
+                if button.in_button(pos):
+                    button.hover()
+                else:
+                    button.unhover()
+
+            self.draw()
+            xiter += xDelta
+            y = int(slope * (xiter - xi) + yi)
+            disk.set_positions(xiter, y) 
+            disk.draw(self.guiWin)
+            # pygame.draw.line(self.guiWin, CHOCOLATE, (xi, yi), (xf, yf), 2)
+            pygame.display.update()
+
+        dest.add_disk(disk)
+        self.moves += 1
                     
 
     def run(self):
