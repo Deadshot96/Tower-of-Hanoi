@@ -17,9 +17,9 @@ class Disk:
         self.y = 0
         self.diskRect = None
 
-        self.set_positions()
+        self.disk_init()
 
-    def set_positions(self):
+    def disk_init(self):
         self.y = self.tower.get_stack_height()
         self.x = self.tower.get_x()
 
@@ -60,4 +60,8 @@ class Disk:
 
     def get_pos(self) -> Tuple[int]:
         return self.x, self.y
+
+    def set_positions(self, x: int, y: int) -> None:
+        self.x = x
+        self.y = y
         
