@@ -23,21 +23,21 @@ class Disk:
         self.y = self.tower.get_stack_height()
         self.x = self.tower.get_x()
 
-        rect = self.x - self.width // 2, self.y - self.height, self.width, self.height
-        self.diskRect = pygame.Rect(rect)
-
-        # self.x = x - self.width // 2
-        # self.y = y - self.height
-
+        self.set_rect()
+        
     def get_top_left(self):
         pass
 
     def get_tower(self):
         return self.tower
 
+    def set_rect(self):
+        rect = self.x - self.width // 2, self.y - self.height, self.width, self.height
+        self.diskRect = pygame.Rect(rect)
+
     def set_tower(self, tower: Tower):
         self.tower = tower
-        self.set_positions()
+        self.disk_init()
 
     def draw(self, win: Surface):
 
@@ -50,12 +50,13 @@ class Disk:
 
         pygame.draw.circle(win, self.color, (cX1, cY1), radius)
         pygame.draw.circle(win, self.color, (cX2, cY2), radius)
-
+        pygame.draw.rect(win, self.color, self.diskRect, 2)
 
     def get_index(self) -> int:
         return self.index
 
     def in_disk(self, pos: Tuple) -> bool:
+        print("Disk Index: ", self.get_index())
         return self.diskRect.collidepoint(pos)
 
     def get_pos(self) -> Tuple[int]:
