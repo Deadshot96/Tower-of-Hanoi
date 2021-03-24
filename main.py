@@ -134,6 +134,9 @@ class gui:
         blitx = (self.width - minMoveRender.get_width()) // 2 - self.x_off
         blity = (self.gui_height - minMoveRender.get_height())
         win.blit(minMoveRender, (blitx, blity))
+
+        for button in self.buttons:
+            button.draw(win)
  
     def draw(self):
         self.guiWin.fill(STEEL_BLUE)
@@ -147,17 +150,17 @@ class gui:
         pygame.draw.circle(self.guiWin, CHOCOLATE, (cX1, cY1), radius)
         pygame.draw.circle(self.guiWin, CHOCOLATE, (cX2, cY2), radius)
 
-
-        for button in self.buttons:
-            button.draw(self.guiWin)
-
         for tower in self.towers:
             tower.draw(self.guiWin)
 
         for disk in self.disks:
             disk.draw(self.guiWin)
 
-        # self.towerS.draw(self.guiWin)
+        if self.selectedDisk:
+            x_delta, y_delta = self.selectedDiskDelta
+            x, y = pygame.mouse.get_pos()
+            self.selectedDisk.set_positions(x - x_delta, y - y_delta)
+            self.selectedDisk.draw(self.guiWin)
         
         pygame.display.update()
 
@@ -214,38 +217,39 @@ class gui:
                             
 
                     if event.button == 1:
-                        print(self.dblClickVar)
+                        # print(self.dblClickVar)
                         if self.dblClickVar == 0:
                             self.dblClickVar = 1
                         elif self.dblClickVar <= self.dblClickLimit:
                             pygame.event.post(self.dblClickEvent)
 
-                if event.type == pygame.MOUSEBUTTONUP:                    
-                    for button in self.buttons:
-                        if button.is_pressed():
-                            button.unpress()
-
-                if event.type == self.dblClickEvent.type:
-                    print("DBL CLICK")
-                    self.dblClickVar = 0
-                    dblClickPos = x - self.x_off, y - self.y_off
+                    clickPos = x - self.x_off, y - self.y_off
                     for tower in self.towers:
                         disk = tower.get_top_disk()
 
-                        if disk and disk.in_disk(dblClickPos):
+                        if disk and disk.in_disk(clickPos):
                             print(f"True: {disk.get_index()}")
                             self.selectedDisk = disk
                             diskX, diskY = disk.get_pos()
 
                             self.selectedDiskDelta = diskX - x, diskY - y
                             self.selectedDiskTower = disk.get_tower()
+                            self.selectedDiskTower.remove_disk(self.selectedDisk)
 
-                if event.type == pygame.MOUSEBUTTONUP:
-                    
+
+                if event.type == pygame.MOUSEBUTTONUP:                    
+                    for button in self.buttons:
+                        if button.is_pressed():
+                            button.unpress()
+
                     self.placeDisk(x, y)
+                    self.selectedDisk = None
+                    self.selectedDiskDelta = None
+                    self.selectedDiskTower = None
 
-
-
+                if event.type == self.dblClickEvent.type:
+                    print("DBL CLICK")
+                    self.dblClickVar = 0
 
             for button in self.buttons:
                 if button.in_button(pos):
