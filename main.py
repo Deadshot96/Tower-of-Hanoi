@@ -159,6 +159,8 @@ class gui:
         if self.selectedDisk:
             x_delta, y_delta = self.selectedDiskDelta
             x, y = pygame.mouse.get_pos()
+            x -= self.x_off
+            y -= self.y_off
             self.selectedDisk.set_positions(x - x_delta, y - y_delta)
             self.selectedDisk.draw(self.guiWin)
         
@@ -168,7 +170,7 @@ class gui:
         label = button.get_label().lower()
 
         if label.startswith('restart'):
-            pass
+            self.reset_disks()
         elif label.startswith('solve'):
             pass
         elif label.startswith('up'):
@@ -187,8 +189,17 @@ class gui:
         x -= self.x_off
         y -= self.y_off
 
+        if not self.selectedDisk:
+            return None
+
+        for tower in self.towers:
+            if tower.in_tower(x, y):
+                if tower.add_disk(self.selectedDisk):
+                    return None
         
-    
+        self.selectedDiskTower.add_disk(self.selectedDisk)
+
+                    
 
     def run(self):
 
@@ -216,23 +227,23 @@ class gui:
                             self.button_click(button)
                             
 
-                    if event.button == 1:
-                        # print(self.dblClickVar)
-                        if self.dblClickVar == 0:
-                            self.dblClickVar = 1
-                        elif self.dblClickVar <= self.dblClickLimit:
-                            pygame.event.post(self.dblClickEvent)
+                    # if event.button == 1:
+                    #     # print(self.dblClickVar)
+                    #     if self.dblClickVar == 0:
+                    #         self.dblClickVar = 1
+                    #     elif self.dblClickVar <= self.dblClickLimit:
+                    #         pygame.event.post(self.dblClickEvent)
 
                     clickPos = x - self.x_off, y - self.y_off
                     for tower in self.towers:
                         disk = tower.get_top_disk()
-
+                        
                         if disk and disk.in_disk(clickPos):
                             print(f"True: {disk.get_index()}")
                             self.selectedDisk = disk
                             diskX, diskY = disk.get_pos()
 
-                            self.selectedDiskDelta = diskX - x, diskY - y
+                            self.selectedDiskDelta = diskX - x + self.x_off, diskY - y + self.y_off
                             self.selectedDiskTower = disk.get_tower()
                             self.selectedDiskTower.remove_disk(self.selectedDisk)
 
@@ -242,7 +253,8 @@ class gui:
                         if button.is_pressed():
                             button.unpress()
 
-                    self.placeDisk(x, y)
+                    pos = pygame.mouse.get_pos()
+                    self.placeDisk(pos[0], pos[1])
                     self.selectedDisk = None
                     self.selectedDiskDelta = None
                     self.selectedDiskTower = None
