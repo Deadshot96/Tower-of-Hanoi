@@ -112,7 +112,7 @@ class gui:
     def reset_disks(self):
         self.disks.clear()
         self.clear_towers()
-
+        self.moves = 0
         for index in range(self.numDisks, 0, -1):
             disk = Disk(index, self.towerS)
             # print(self.towerS.get_min_disk_index())
@@ -161,7 +161,7 @@ class gui:
             x, y = pygame.mouse.get_pos()
             x -= self.x_off
             y -= self.y_off
-            self.selectedDisk.set_positions(x - x_delta, y - y_delta)
+            self.selectedDisk.set_positions(x + x_delta, y + y_delta)
             self.selectedDisk.draw(self.guiWin)
         
         pygame.display.update()
@@ -195,8 +195,10 @@ class gui:
         for tower in self.towers:
             if tower.in_tower(x, y):
                 if tower.add_disk(self.selectedDisk):
+                    if self.selectedDiskTower != tower:
+                        self.moves += 1
                     return None
-        
+                
         self.selectedDiskTower.add_disk(self.selectedDisk)
 
                     
