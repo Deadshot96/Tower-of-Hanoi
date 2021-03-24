@@ -45,6 +45,13 @@ class Tower:
         
         return False
 
+    def remove_disk(self, disk) -> bool:
+        if disk in self.disks:
+            self.disks.remove(disk)
+            return True
+        return False
+
+
     def get_min_disk_index(self):
         if len(self.disks) == 0:
             return 20
@@ -61,8 +68,8 @@ class Tower:
 
     def get_top_disk(self):
         if len(self.disks) == 0:
-            return 0
-        return self.disks[-1]
+            return None
+        return self.disks[self.get_min_disk_index()]
 
     def in_tower(self, x: int, y: int) -> bool:
         return self.towerRect
