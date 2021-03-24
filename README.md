@@ -4,4 +4,4 @@
 ### can use to solve it manually or implemented a 
 ### recursion algorithm to solve it automatically.
 
-## It's not done yet. I'll finish it ASAP.
+## Just run main.py and have fun!
